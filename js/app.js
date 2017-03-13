@@ -1,17 +1,17 @@
 var my_news = [
     {
-        author: 'Саша Печкин',
-        text: 'Хочется быть взрослым адекватным человеком',
+        author:  'Саша Печкин',
+        text:    'Хочется быть взрослым адекватным человеком',
         bigText: 'Хочется быть взрослым адекватным человеком, но с горочки на картоночке уиииии!'
     },
     {
-        author: 'Просто Вася',
-        text: 'Вся жизнь театр',
+        author:  'Просто Вася',
+        text:    'Вся жизнь театр',
         bigText: 'Вся жизнь театр, а я просто упал со сцены'
     },
     {
-        author: 'Гость',
-        text: 'На работу хожу очень быстро',
+        author:  'Гость',
+        text:    'На работу хожу очень быстро',
         bigText: 'На работу хожу очень быстро, чтобы не передумать'
     }
 ];
@@ -19,8 +19,8 @@ var my_news = [
 var Article = React.createClass({
     propTypes: {
         data: React.PropTypes.shape({
-            author: React.PropTypes.string.isRequired,
-            text: React.PropTypes.string.isRequired,
+            author:  React.PropTypes.string.isRequired,
+            text:    React.PropTypes.string.isRequired,
             bigText: React.PropTypes.string.isRequired
         })
     },
@@ -31,33 +31,44 @@ var Article = React.createClass({
         };
     },
 
+    readmoreClick: function (e) {
+        e.preventDefault();
+        this.setState({visible: true});
+    },
+
     render: function () {
-        var author = this.props.data.author,
-            text = this.props.data.text,
-            bigText = this.props.data.bigText;
+        var author  = this.props.data.author,
+            text    = this.props.data.text,
+            bigText = this.props.data.bigText,
+            visible = this.state.visible; // считываем значение переменной из состояния компонента
 
         return (
             <div className="article">
                 <p className="news__author">{author}</p>
-                <p className="news__text">{text}</p>
-                <a href="#" className="news_readmore">Подробнее</a>
-                <p className="news__big-text">{bigText}</p>
+                <p className={'news__text ' + (visible ? 'none' : '')}>{text}</p>
+                {/* не показывать ссылку, если visible === true */}
+                <a href="#"
+                   onClick={this.readmoreClick}
+                   className={'news__readmore ' + (visible ? 'none' : '')}>
+                   Подробнее
+                </a>
+                {/* не показывать весь текст, если visible === false */}
+                <p className={'news__big-text ' + (visible ? '' : 'none')}>{bigText}</p>
             </div>
         )
-
     }
 })
-var News = React.createClass({
+var News    = React.createClass({
     propTypes: {
         data: React.PropTypes.array.isRequired
     },
 
-    render: function() {
+    render: function () {
         var data = this.props.data;
         var newsTemplate;
 
         if (data.length > 0) {
-            newsTemplate = data.map(function(item, index) {
+            newsTemplate = data.map(function (item, index) {
                 return (
                     <div key={index}>
                         <Article data={item}/>
@@ -71,18 +82,19 @@ var News = React.createClass({
         return (
             <div className="news">
                 {newsTemplate}
-                <strong className={'news__count ' + (data.length > 0 ? '':'none')}>Всего новостей: {data.length}</strong>
+                <strong className={'news__count ' + (data.length > 0 ? '' : 'none')}>Всего
+                                                                                     новостей: {data.length}</strong>
             </div>
         );
     }
 })
 
 var App = React.createClass({
-    render: function() {
+    render: function () {
         return (
             <div className="app">
                 <h3>Новости</h3>
-                <News data={my_news} />
+                <News data={my_news}/>
             </div>
         )
     }
